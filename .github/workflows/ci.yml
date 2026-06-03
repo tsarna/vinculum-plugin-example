@@ -40,35 +40,44 @@ jobs:
       - name: Build plugin (.so)
         run: go build -buildmode=plugin -o example.so .
 
-  # End-to-end smoke test using the documented container workflow. The
-  # plugin is built in vinculum-build and loaded by the matching vinculum
-  # runtime image, which guarantees the .so and host binary are
-  # ABI-compatible (same toolchain, deps, and build flags). The image tag
-  # is derived from the vinculum version in go.mod so it stays in sync.
+  # End-to-end smoke test. Go plugins require cgo (-buildmode=plugin needs
+  # external linking) and the .so must match the host binary's toolchain
+  # and cgo/build state exactly, so we build BOTH the host binary and the
+  # plugin here on the runner with the default cgo-enabled settings.
+  #
+  # GOTOOLCHAIN=local pins both builds to the toolchain set up below (from
+  # go.mod) and prevents `go install` from silently upgrading to a newer
+  # patch release for the host only, which would produce an ABI mismatch
+  # (e.g. "plugin was built with a different version of package
+  # internal/godebugs"). The host is installed from the same released
+  # vinculum version the plugin compiles against.
   smoke:
     runs-on: ubuntu-latest
+    env:
+      GOTOOLCHAIN: local
     steps:
       - uses: actions/checkout@v6
 
-      - name: Determine vinculum version from go.mod
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+
+      - name: Determine vinculum version
         id: ver
         run: |
-          version=$(grep -E '^[[:space:]]*github.com/tsarna/vinculum ' go.mod \
-            | awk '{print $2}' | sed 's/^v//')
+          version=$(go list -m -f '{{.Version}}' github.com/tsarna/vinculum)
           echo "Using vinculum $version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
-      - name: Build plugin (.so) in vinculum-build image
-        run: |
-          docker run --rm \
-            -v "$PWD":/plugin -w /plugin \
-            ghcr.io/tsarna/vinculum-build:${{ steps.ver.outputs.version }} \
-            go build -buildmode=plugin -trimpath -o example.so .
+      - name: Install matching vinculum host binary
+        run: go install github.com/tsarna/vinculum@${{ steps.ver.outputs.version }}
 
-      - name: Smoke test (vinculum check loads plugin + validates config)
+      - name: Build plugin (.so)
         run: |
-          docker run --rm \
-            -v "$PWD/example.so":/plugins/example.so:ro \
-            -v "$PWD/examples":/conf:ro \
-            ghcr.io/tsarna/vinculum:${{ steps.ver.outputs.version }} \
-            check --plugin-path /plugins /conf
+          mkdir -p plugins
+          go build -buildmode=plugin -o plugins/example.so .
+
+      - name: Smoke test (host loads plugin + validates config)
+        run: |
+          "$(go env GOPATH)/bin/vinculum" check --plugin-path plugins examples/
