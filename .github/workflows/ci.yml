@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  # Fast plain-Go checks: formatting, vet, tidiness, and that the plugin
+  # compiles against the released vinculum module.
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+
+      - name: Check formatting
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "These files are not gofmt-clean:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Check go.mod/go.sum are tidy
+        run: go mod tidy -diff
+
+      - name: Build plugin (.so)
+        run: go build -buildmode=plugin -o example.so .
+
+  # End-to-end smoke test using the documented container workflow. The
+  # plugin is built in vinculum-build and loaded by the matching vinculum
+  # runtime image, which guarantees the .so and host binary are
+  # ABI-compatible (same toolchain, deps, and build flags). The image tag
+  # is derived from the vinculum version in go.mod so it stays in sync.
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Determine vinculum version from go.mod
+        id: ver
+        run: |
+          version=$(grep -E '^[[:space:]]*github.com/tsarna/vinculum ' go.mod \
+            | awk '{print $2}' | sed 's/^v//')
+          echo "Using vinculum $version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Build plugin (.so) in vinculum-build image
+        run: |
+          docker run --rm \
+            -v "$PWD":/plugin -w /plugin \
+            ghcr.io/tsarna/vinculum-build:${{ steps.ver.outputs.version }} \
+            go build -buildmode=plugin -trimpath -o example.so .
+
+      - name: Smoke test (vinculum check loads plugin + validates config)
+        run: |
+          docker run --rm \
+            -v "$PWD/example.so":/plugins/example.so:ro \
+            -v "$PWD/examples":/conf:ro \
+            ghcr.io/tsarna/vinculum:${{ steps.ver.outputs.version }} \
+            check --plugin-path /plugins /conf
