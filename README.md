@@ -148,10 +148,25 @@ ABI mismatch. The plugin and host must agree on:
 - the **version of every shared module** (especially `github.com/tsarna/vinculum`
   and everything it transitively imports);
 - **build flags** (`-trimpath`, build tags); and
-- **CGO state** (both on or both off).
+- **GOOS / GOARCH**.
 
-Building inside the matching `vinculum-build` image (deploy) or via the local
-`go.work` (dev) is what keeps all of these aligned.
+**cgo is required, on both sides.** `-buildmode=plugin` always forces external
+linking (the Go toolchain requires it "even for programs that do not use cgo"),
+so building a plugin with `CGO_ENABLED=0` fails outright:
+
+```text
+-buildmode=plugin requires external (cgo) linking, but cgo is not enabled
+```
+
+A statically linked, cgo-disabled host binary likewise cannot load any plugin.
+So both the host `vinculum` binary and the plugin must be built with cgo enabled
+(`CGO_ENABLED=1`, with a C toolchain available). On Linux/amd64 and Linux/arm64
+cgo is enabled by default when a C compiler is present.
+
+Building both the host and the plugin in the same environment — with the same
+toolchain and cgo on — is what keeps all of these aligned. The local `go.work`
+(dev) does this against `../vinculum`; CI does it on the runner (see
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
 
 Plugin loading is only available on **Linux, macOS, and FreeBSD**. Production
 deployments should target Linux; the macOS pairing is fragile across OS releases.
