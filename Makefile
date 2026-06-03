@@ -10,7 +10,7 @@
 
 PLUGIN      := example
 SO          := $(PLUGIN).so
-VINCULUM_VERSION ?= 0.36.0
+VINCULUM_VERSION ?= 0.37.0
 SMOKE_DIR   := /tmp/vinc-smoke
 
 .PHONY: build docker-build smoke clean

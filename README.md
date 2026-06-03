@@ -123,14 +123,14 @@ matching `vinculum-build` image, which pins the Go toolchain, dependency
 versions, and build flags to the values used by that Vinculum release:
 
 ```sh
-make docker-build VINCULUM_VERSION=0.36.0
+make docker-build VINCULUM_VERSION=0.37.0
 ```
 
 Then bake the `.so` into a runtime image (see [`Dockerfile`](Dockerfile)) whose
 tag matches the build image:
 
 ```dockerfile
-FROM ghcr.io/tsarna/vinculum:0.36.0
+FROM ghcr.io/tsarna/vinculum:0.37.0
 COPY example.so /plugins/
 ```
 
