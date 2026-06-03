@@ -1,0 +1,7 @@
+// Load the example plugin. The label "example" makes Vinculum load
+// ${plugin-path}/example.so. Every attribute in this block (other than
+// the reserved `disabled`) is surfaced by the plugin as example.<name>.
+plugin "example" {
+  greeting = "Hi"
+  answer   = 42
+}
