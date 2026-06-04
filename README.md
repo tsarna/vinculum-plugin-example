@@ -42,6 +42,7 @@ assert "ambient" { condition = example.answer == 42 }
 | `examples/example.vcl` | `assert` blocks that exercise the plugin's contributions. |
 | `Makefile` | `build`, `docker-build`, `smoke`, `clean` targets. |
 | `Dockerfile` | Example deployment image (released runtime + the `.so`). |
+| `renovate.json` | Renovate config; bumps the vinculum go.mod dep and Docker base image together (CI verifies each bump). |
 | `go.work` | **Gitignored**, local-dev only — links `../vinculum` for ABI-matched local builds. |
 
 ## Anatomy of a plugin

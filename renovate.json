@@ -1,0 +1,14 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "postUpdateOptions": ["gomodTidy"],
+  "packageRules": [
+    {
+      "groupName": "vinculum",
+      "description": "Keep the go.mod dependency and the Dockerfile base image on the same vinculum version (the plugin must match the runtime image). The CI smoke job verifies each bump actually loads before merge.",
+      "matchPackageNames": [
+        "github.com/tsarna/vinculum",
+        "ghcr.io/tsarna/vinculum"
+      ]
+    }
+  ]
+}
