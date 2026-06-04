@@ -10,10 +10,13 @@
 
 PLUGIN      := example
 SO          := $(PLUGIN).so
-# Tag of the vinculum-build / runtime images for the deployment build. The
-# container plugin workflow requires the cgo-enabled images (vinculum
-# >= 0.37.1), and your go.mod must require this exact vinculum version.
-VINCULUM_VERSION ?= 0.37.1
+# The vinculum-build / runtime image tag for the deployment build is derived
+# from the version pinned in go.mod, so go.mod is the single source of truth:
+# bump the require there (manually or via Renovate/Dependabot) and `make
+# docker-build` + CI all follow. Override on the command line if needed.
+# (The container plugin workflow requires the cgo-enabled images, vinculum
+# >= 0.37.1.)
+VINCULUM_VERSION ?= $(shell grep -E '^[[:space:]]*github.com/tsarna/vinculum ' go.mod | awk '{print $$2}' | sed 's/^v//')
 SMOKE_DIR   := /tmp/vinc-smoke
 
 .PHONY: build docker-build smoke clean
