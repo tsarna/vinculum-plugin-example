@@ -119,18 +119,24 @@ loaded and its contributions resolved.
 ### Deployment (`make docker-build`)
 
 For a real deployment, build against the *released* vinculum module inside the
-matching `vinculum-build` image, which pins the Go toolchain, dependency
-versions, and build flags to the values used by that Vinculum release:
+matching `vinculum-build` image using its bundled `vinculum-plugin-build`
+wrapper, which enforces the toolchain and build flags and fails fast if any
+shared dependency drifts from the release:
 
 ```sh
-make docker-build VINCULUM_VERSION=0.37.0
+make docker-build VINCULUM_VERSION=0.37.1
 ```
+
+> Plugin support in the container images requires **vinculum ≥ 0.37.1**
+> (earlier images were built without cgo and cannot build or load plugins).
+> Your `go.mod` must `require github.com/tsarna/vinculum` at the **same**
+> version as `VINCULUM_VERSION`.
 
 Then bake the `.so` into a runtime image (see [`Dockerfile`](Dockerfile)) whose
 tag matches the build image:
 
 ```dockerfile
-FROM ghcr.io/tsarna/vinculum:0.37.0
+FROM ghcr.io/tsarna/vinculum:0.37.1
 COPY example.so /plugins/
 ```
 

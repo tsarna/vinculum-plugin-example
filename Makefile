@@ -10,7 +10,10 @@
 
 PLUGIN      := example
 SO          := $(PLUGIN).so
-VINCULUM_VERSION ?= 0.37.0
+# Tag of the vinculum-build / runtime images for the deployment build. The
+# container plugin workflow requires the cgo-enabled images (vinculum
+# >= 0.37.1), and your go.mod must require this exact vinculum version.
+VINCULUM_VERSION ?= 0.37.1
 SMOKE_DIR   := /tmp/vinc-smoke
 
 .PHONY: build docker-build smoke clean
@@ -25,11 +28,13 @@ build:
 	go build -buildmode=plugin -o $(SO) .
 
 ## docker-build: compile the plugin for deployment against a released vinculum
+## (uses the bundled wrapper, which enforces flags/toolchain and fails fast
+## on shared-dependency drift). Requires go.mod to require v$(VINCULUM_VERSION).
 docker-build:
 	docker run --rm \
 		-v "$(CURDIR)":/plugin -w /plugin \
 		ghcr.io/tsarna/vinculum-build:$(VINCULUM_VERSION) \
-		go build -buildmode=plugin -trimpath -o $(SO) .
+		vinculum-plugin-build -o $(SO) .
 
 ## smoke: build a host binary + the plugin from local source and run `vinculum check`
 smoke:
