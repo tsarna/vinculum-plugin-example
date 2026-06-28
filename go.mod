@@ -4,7 +4,7 @@ go 1.26.0
 
 require (
 	github.com/hashicorp/hcl/v2 v2.24.0
-	github.com/tsarna/vinculum v0.41.0
+	github.com/tsarna/vinculum v0.42.0
 	github.com/zclconf/go-cty v1.18.1
 	go.uber.org/zap v1.28.0
 )
@@ -49,12 +49,12 @@ require (
 	github.com/tsarna/go-structdiff v0.2.1 // indirect
 	github.com/tsarna/go2cty2go v0.1.3 // indirect
 	github.com/tsarna/hcl-jqfunc v0.1.4 // indirect
-	github.com/tsarna/rich-cty-types v0.2.0 // indirect
+	github.com/tsarna/rich-cty-types v0.3.0 // indirect
 	github.com/tsarna/time-cty-funcs v0.2.1 // indirect
 	github.com/tsarna/url-cty-funcs v0.1.0 // indirect
-	github.com/tsarna/vinculum-bus v0.15.0 // indirect
+	github.com/tsarna/vinculum-bus v0.15.1 // indirect
 	github.com/tsarna/vinculum-fsm v0.5.1 // indirect
-	github.com/tsarna/vinculum-wire v0.2.0 // indirect
+	github.com/tsarna/vinculum-wire v0.2.1 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/otel v1.44.0 // indirect
