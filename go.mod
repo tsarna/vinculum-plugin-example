@@ -5,7 +5,7 @@ go 1.26.0
 require (
 	github.com/hashicorp/hcl/v2 v2.24.0
 	github.com/tsarna/vinculum v0.42.0
-	github.com/zclconf/go-cty v1.18.1
+	github.com/zclconf/go-cty v1.19.0
 	go.uber.org/zap v1.28.0
 )
 
@@ -16,6 +16,7 @@ require (
 	github.com/agext/levenshtein v1.2.1 // indirect
 	github.com/amir-yaghoubi/mqttpattern v0.0.0-20250829083210-f7d8d46a786e // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
+	github.com/apparentlymart/go-textseg/v17 v17.0.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cloudflare/circl v1.6.3 // indirect
