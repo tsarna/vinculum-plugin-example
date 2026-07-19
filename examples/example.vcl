@@ -1,6 +1,6 @@
 // Exercise the contributions made by the example plugin. `vinculum check`
 // evaluates these assert blocks, so a successful check proves the plugin
-// loaded and both the ambient `example.*` value and the `example_greet`
+// loaded and both the ambient `example.*` value and the `example::greet`
 // function are available.
 
 // The ambient provider surfaces each plugin-block attribute.
@@ -14,5 +14,5 @@ assert "ambient_answer" {
 
 // The function combines the block's greeting with its argument.
 assert "function_greet" {
-  condition = example_greet("world") == "Hi, world!"
+  condition = example::greet("world") == "Hi, world!"
 }

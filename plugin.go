@@ -16,9 +16,14 @@
 //     block as a top-level VCL value under `example.*` (so the config
 //     above yields `example.greeting == "Hi"` and `example.answer == 42`).
 //
-//  2. A function `example_greet(name)` that returns "<greeting>, <name>!",
+//  2. A function `example::greet(name)` that returns "<greeting>, <name>!",
 //     where <greeting> comes from the block's `greeting` attribute
-//     (defaulting to "Hello").
+//     (defaulting to "Hello"). Vinculum namespaces its own function
+//     families this way (`log::info`, `http::get`, `time::add`), and a
+//     plugin should follow suit: HCL parses `a::b(x)` natively and
+//     resolves it as a single flat map key, so a namespaced name is just
+//     a naming convention, not extra machinery. The leaf name does not
+//     repeat the namespace -- `example::greet`, not `example::example_greet`.
 //
 // See the README for a full walkthrough and the list of other Register*
 // extension points a plugin may call.
@@ -89,10 +94,12 @@ func VinculumPluginInit(ctx *config.PluginContext) hcl.Diagnostics {
 		return exampleObj
 	})
 
-	// Contribute the example_greet(name) function.
+	// Contribute the example::greet(name) function. The "::" is not special
+	// to the registry -- the map key is matched verbatim -- so a namespaced
+	// name needs nothing beyond spelling it that way here.
 	config.RegisterFunctionPlugin("example", func(_ *config.Config) map[string]function.Function {
 		return map[string]function.Function{
-			"example_greet": function.New(&function.Spec{
+			"example::greet": function.New(&function.Spec{
 				Params: []function.Parameter{
 					{Name: "name", Type: cty.String},
 				},

@@ -16,8 +16,12 @@ This example contributes two things:
 1. **An ambient provider `example.*`** — every attribute of the
    `plugin "example" { ... }` block is surfaced as a top-level VCL value.
    With the block below, `example.greeting == "Hi"` and `example.answer == 42`.
-2. **A function `example_greet(name)`** — returns `"<greeting>, <name>!"`,
+2. **A function `example::greet(name)`** — returns `"<greeting>, <name>!"`,
    where `<greeting>` is the block's `greeting` attribute (default `"Hello"`).
+   Vinculum namespaces its own function families this way (`log::info`,
+   `http::get`, `time::add`), and plugins should too — HCL parses `a::b(x)`
+   natively and resolves it as a single flat map key, so it costs nothing
+   beyond spelling the registry key that way.
 
 ```hcl
 # boot.vinit
@@ -29,7 +33,7 @@ plugin "example" {
 
 ```hcl
 # example.vcl
-assert "greet" { condition = example_greet("world") == "Hi, world!" }
+assert "greet" { condition = example::greet("world") == "Hi, world!" }
 assert "ambient" { condition = example.answer == 42 }
 ```
 
@@ -81,7 +85,7 @@ func VinculumPluginInit(ctx *config.PluginContext) hcl.Diagnostics {
         return exampleObj // surfaced as `example.*` in VCL
     })
     config.RegisterFunctionPlugin("example", func(_ *config.Config) map[string]function.Function {
-        return map[string]function.Function{"example_greet": /* ... */}
+        return map[string]function.Function{"example::greet": /* ... */}
     })
     return diags
 }
