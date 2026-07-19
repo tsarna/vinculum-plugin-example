@@ -195,9 +195,21 @@ from `VinculumPluginInit`:
 | `RegisterServerType` | `server "type"` blocks |
 | `RegisterClientType` | `client "type"` blocks |
 | `RegisterTriggerType` | `trigger "type"` blocks |
+| `RegisterConditionalTriggerType` | a `trigger "type"` whose availability depends on config state (e.g. a feature flag), resolved per `Build()` |
 | `RegisterConditionSubtype` | `condition "subtype"` blocks |
 | `RegisterWireFormatType` | `wire_format "type"` blocks |
 | `RegisterEditorType` | `editor "type"` blocks |
+| `RegisterFunctyType` | a named type usable in [functy](https://github.com/tsarna/functy) (`.cty`) annotations — a capsule type, or a rich object's type when its attribute set is fixed |
+| `RegisterFunctyOpenType` | the open, predicate-backed form of the above, for a type with no single fixed `cty.Type` (attributes vary per instance, or interface dispatch spans several capsules) |
+| `RegisterFunctyExterns` | a `//functy:extern` source declaring the *real* signatures of the functions you contribute, so `help()` and editor tooling show them correctly |
+
+The last three arrived with the functy integration in vinculum 0.43.0. They
+matter if your plugin contributes its own types or functions: cty can only make
+a *trailing* parameter optional, so a function taking an optional leading `ctx`
+has to fake it with a variadic and reflects uselessly as `f(thing, ...args)` —
+an extern states what it actually accepts. Note that functy checks extern names
+for collisions (two plugins declaring the same name is an error), which the
+function-plugin registry does not.
 
 Plugins **cannot** add entirely new top-level `.vcl` block types — the set of
 recognized block types is fixed by the host binary.
