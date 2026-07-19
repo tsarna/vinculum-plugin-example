@@ -4,7 +4,7 @@ go 1.26.0
 
 require (
 	github.com/hashicorp/hcl/v2 v2.24.0
-	github.com/tsarna/vinculum v0.42.0
+	github.com/tsarna/vinculum v0.43.0
 	github.com/zclconf/go-cty v1.19.0
 	go.uber.org/zap v1.28.0
 )
@@ -46,13 +46,14 @@ require (
 	github.com/sergi/go-diff v1.3.2-0.20230802210424-5b0b94c5c0d3 // indirect
 	github.com/skeema/knownhosts v1.3.1 // indirect
 	github.com/sosodev/duration v1.4.0 // indirect
-	github.com/tsarna/bytes-cty-type v0.1.0 // indirect
+	github.com/tsarna/bytes-cty-type v0.2.0 // indirect
+	github.com/tsarna/functy v0.11.0 // indirect
 	github.com/tsarna/go-structdiff v0.2.1 // indirect
 	github.com/tsarna/go2cty2go v0.1.3 // indirect
 	github.com/tsarna/hcl-jqfunc v0.1.4 // indirect
-	github.com/tsarna/rich-cty-types v0.3.0 // indirect
-	github.com/tsarna/time-cty-funcs v0.2.1 // indirect
-	github.com/tsarna/url-cty-funcs v0.1.0 // indirect
+	github.com/tsarna/rich-cty-types v0.5.1 // indirect
+	github.com/tsarna/time-cty-funcs v0.4.0 // indirect
+	github.com/tsarna/url-cty-funcs v0.2.0 // indirect
 	github.com/tsarna/vinculum-bus v0.15.1 // indirect
 	github.com/tsarna/vinculum-fsm v0.5.1 // indirect
 	github.com/tsarna/vinculum-wire v0.2.1 // indirect
@@ -63,13 +64,13 @@ require (
 	go.opentelemetry.io/otel/trace v1.44.0 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.4 // indirect
-	golang.org/x/crypto v0.53.0 // indirect
-	golang.org/x/mod v0.36.0 // indirect
-	golang.org/x/net v0.56.0 // indirect
-	golang.org/x/sync v0.21.0 // indirect
-	golang.org/x/sys v0.46.0 // indirect
-	golang.org/x/text v0.38.0 // indirect
-	golang.org/x/tools v0.45.0 // indirect
+	golang.org/x/crypto v0.54.0 // indirect
+	golang.org/x/mod v0.37.0 // indirect
+	golang.org/x/net v0.57.0 // indirect
+	golang.org/x/sync v0.22.0 // indirect
+	golang.org/x/sys v0.47.0 // indirect
+	golang.org/x/text v0.40.0 // indirect
+	golang.org/x/tools v0.47.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 )

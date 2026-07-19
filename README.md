@@ -125,7 +125,7 @@ wrapper, which enforces the toolchain and build flags and fails fast if any
 shared dependency drifts from the release:
 
 ```sh
-make docker-build VINCULUM_VERSION=0.37.1
+make docker-build VINCULUM_VERSION=0.43.0
 ```
 
 > Plugin support in the container images requires **vinculum ≥ 0.37.1**
@@ -137,7 +137,7 @@ Then bake the `.so` into a runtime image (see [`Dockerfile`](Dockerfile)) whose
 tag matches the build image:
 
 ```dockerfile
-FROM ghcr.io/tsarna/vinculum:0.37.1
+FROM ghcr.io/tsarna/vinculum:0.43.0
 COPY example.so /plugins/
 ```
 
