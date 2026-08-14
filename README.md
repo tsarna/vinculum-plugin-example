@@ -129,7 +129,7 @@ wrapper, which enforces the toolchain and build flags and fails fast if any
 shared dependency drifts from the release:
 
 ```sh
-make docker-build VINCULUM_VERSION=0.43.0
+make docker-build VINCULUM_VERSION=0.45.0
 ```
 
 > Plugin support in the container images requires **vinculum ≥ 0.37.1**
@@ -141,7 +141,7 @@ Then bake the `.so` into a runtime image (see [`Dockerfile`](Dockerfile)) whose
 tag matches the build image:
 
 ```dockerfile
-FROM ghcr.io/tsarna/vinculum:0.43.0
+FROM ghcr.io/tsarna/vinculum:0.45.0
 COPY example.so /plugins/
 ```
 
@@ -213,6 +213,43 @@ function-plugin registry does not.
 
 Plugins **cannot** add entirely new top-level `.vcl` block types — the set of
 recognized block types is fixed by the host binary.
+
+### Describing a block type you contribute
+
+The seven registration functions that add a *block type* — server, client,
+trigger, conditional trigger, condition subtype, wire format, and editor — take
+optional `RegisterOption` arguments. Pass `config.WithSchema` so
+[`vinculum schema`](https://github.com/tsarna/vinculum/blob/main/doc/schema.md)
+can describe your block the same way it describes the built-in ones:
+
+```go
+config.RegisterClientType("acme", process, config.WithSchema(config.TypeSchema{
+    Sample:  &acmeClientDefinition{},   // your gohcl decode struct
+    Summary: "Connects to an Acme widget broker.",
+    Attrs: map[string]config.AttrMeta{
+        "url":     {Summary: "Broker URL.", Hint: config.HintURL},
+        "timeout": {Summary: "Request deadline.", Hint: config.HintDuration},
+    },
+}))
+```
+
+`Sample` is the decode struct itself, so attributes, their required-ness, and
+nested sub-blocks are reflected rather than restated — you write only the prose
+and hints, and they are checked against the reflected structure.
+
+`vinculum schema` describes a stock binary by default; pass `--plugin-path` and
+the config paths that declare your plugin to include its types:
+
+```sh
+vinculum schema --plugin-path ./plugins ./configs/
+```
+
+`RegisterConditionalTriggerType` takes `config.WithVariantSchemas` instead — its
+factory cannot run without a `*Config`, so the type names have to be named
+explicitly.
+
+This example registers a function and an ambient value rather than a block
+type, so it has nothing to pass `WithSchema` to. Arrived in vinculum 0.45.0.
 
 ## Further reading
 
