@@ -4,7 +4,7 @@ go 1.26.0
 
 require (
 	github.com/hashicorp/hcl/v2 v2.24.0
-	github.com/tsarna/vinculum v0.45.0
+	github.com/tsarna/vinculum v0.45.1
 	github.com/zclconf/go-cty v1.19.0
 	go.uber.org/zap v1.28.0
 )
