@@ -11,6 +11,6 @@
 #
 # IMPORTANT: the base image tag MUST match the vinculum-build tag used to
 # compile example.so.
-FROM ghcr.io/tsarna/vinculum:0.45.0
+FROM ghcr.io/tsarna/vinculum:0.45.1
 
 COPY example.so /plugins/
